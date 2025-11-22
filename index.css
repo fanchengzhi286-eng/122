@@ -8,5 +8,7 @@ body {
   margin: 0; 
   overflow: hidden; 
   background-color: #0B0C15; 
-  font-family: 'Inter', sans-serif; 
+  font-family: 'Inter', sans-serif;
+  /* Critical for 3D mobile apps: prevents scroll/zoom gestures from affecting the page instead of the canvas */
+  touch-action: none; 
 }

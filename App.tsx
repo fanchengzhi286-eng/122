@@ -36,15 +36,19 @@ const App: React.FC = () => {
       </div>
 
       {/* Header Overlay */}
-      <div className="absolute top-0 left-0 w-full p-6 z-10 pointer-events-none">
+      <div className="absolute top-0 left-0 w-full p-4 md:p-6 z-10 pointer-events-none">
         <div className="flex justify-between items-start">
-          <div className="pointer-events-auto">
-            <h1 className="text-4xl font-bold text-white tracking-tight mb-1 drop-shadow-md">
+          <div className="pointer-events-auto max-w-[70%] md:max-w-xs">
+            <h1 className="text-2xl md:text-4xl font-bold text-white tracking-tight mb-1 drop-shadow-md">
               EcoSphere <span className="text-accent-cyan font-light">3D</span>
             </h1>
-            <p className="text-gray-400 text-sm max-w-xs">
+            <p className="text-gray-400 text-xs md:text-sm hidden sm:block">
               Interactive visualization of global economic distribution. 
               Click on a data tower to analyze the economy with Gemini AI.
+            </p>
+            {/* Mobile simplified subtitle */}
+            <p className="text-gray-400 text-xs sm:hidden">
+              Tap a tower to analyze economy.
             </p>
           </div>
 
@@ -63,16 +67,16 @@ const App: React.FC = () => {
 
       {/* Intro Tooltip (disappears on interaction) */}
       {showIntro && !selectedCountry && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none animate-pulse">
-          <div className="bg-black/60 backdrop-blur text-white px-6 py-3 rounded-full border border-white/20 flex items-center gap-2">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none animate-pulse w-full text-center px-4">
+          <div className="inline-flex bg-black/60 backdrop-blur text-white px-4 py-2 md:px-6 md:py-3 rounded-full border border-white/20 items-center gap-2 justify-center">
              <Info size={16} />
-             <span className="text-sm">Click a country tower to explore</span>
+             <span className="text-xs md:text-sm">Click a country tower to explore</span>
           </div>
         </div>
       )}
 
       {/* Sidebar Detail View */}
-      <div className={`absolute inset-y-0 right-0 z-20 transition-transform duration-500 transform ${selectedCountry ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`absolute inset-y-0 right-0 z-20 transition-transform duration-500 transform ${selectedCountry ? 'translate-x-0' : 'translate-x-full'} w-full sm:w-auto`}>
         <Sidebar 
           country={selectedCountry} 
           onClose={() => setSelectedCountry(null)} 
@@ -81,7 +85,7 @@ const App: React.FC = () => {
 
       {/* Mobile Tip */}
       <div className="absolute bottom-8 w-full text-center pointer-events-none md:hidden">
-        <p className="text-white/50 text-xs">Pinch to zoom • Drag to rotate</p>
+        <p className="text-white/50 text-[10px] uppercase tracking-widest">Pinch to zoom • Drag to rotate</p>
       </div>
     </div>
   );
