@@ -1,0 +1,5 @@
+{
+  "name": "EcoSphere 3D",
+  "description": "An interactive 3D visualization of Global GDP data powered by React Three Fiber and Gemini 2.5 Flash for real-time economic insights.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,131 @@
+import React, { useEffect, useState } from 'react';
+import { CountryData, EconomicInsight } from '../types';
+import { fetchEconomicInsight } from '../services/geminiService';
+import { X, TrendingUp, AlertTriangle, Globe, Loader2, Cpu } from 'lucide-react';
+
+interface SidebarProps {
+  country: CountryData | null;
+  onClose: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ country, onClose }) => {
+  const [insight, setInsight] = useState<EconomicInsight | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (country) {
+      setLoading(true);
+      setInsight(null);
+      // Fetch AI insight
+      fetchEconomicInsight(country.name, country.gdp)
+        .then(data => {
+          setInsight(data);
+          setLoading(false);
+        });
+    }
+  }, [country]);
+
+  if (!country) return null;
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    notation: 'compact',
+    maximumFractionDigits: 1
+  });
+
+  return (
+    <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-space-900/90 backdrop-blur-xl border-l border-white/10 shadow-2xl p-6 overflow-y-auto z-50 transition-transform duration-300">
+      <button 
+        onClick={onClose}
+        className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-white transition-colors"
+      >
+        <X size={20} />
+      </button>
+
+      <div className="mt-8">
+        <div className="flex items-center space-x-3 mb-2">
+          <Globe className="text-accent-blue" size={24} />
+          <span className="text-accent-blue text-sm font-semibold tracking-wider uppercase">{country.region}</span>
+        </div>
+        
+        <h2 className="text-4xl font-bold text-white mb-4">{country.name}</h2>
+        
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+            <div className="text-gray-400 text-xs uppercase mb-1">GDP (Approx)</div>
+            <div className="text-2xl font-mono text-emerald-400">{formatter.format(country.gdp * 1_000_000_000)}</div>
+          </div>
+          <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+            <div className="text-gray-400 text-xs uppercase mb-1">Population</div>
+            <div className="text-2xl font-mono text-blue-400">{country.population}</div>
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 my-6"></div>
+
+        <div className="space-y-6">
+          <div className="flex items-center space-x-2 text-purple-400 mb-2">
+             <Cpu size={18} />
+             <h3 className="font-bold text-lg">AI Economic Analysis</h3>
+          </div>
+
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500 space-y-3">
+              <Loader2 className="animate-spin" size={32} />
+              <p className="text-sm">Consulting Gemini 2.5...</p>
+            </div>
+          ) : insight ? (
+            <div className="space-y-6 animate-fade-in">
+              
+              <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-lg">
+                <p className="text-gray-200 text-sm leading-relaxed italic">
+                  "{insight.summary}"
+                </p>
+              </div>
+
+              <div>
+                <div className="flex items-center space-x-2 text-emerald-400 mb-3">
+                  <TrendingUp size={16} />
+                  <span className="font-semibold text-sm uppercase">Key Drivers</span>
+                </div>
+                <ul className="space-y-2">
+                  {insight.keyDrivers?.map((driver, i) => (
+                    <li key={i} className="flex items-start space-x-2 text-sm text-gray-300">
+                      <span className="block w-1.5 h-1.5 mt-1.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+                      <span>{driver}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <div className="flex items-center space-x-2 text-amber-400 mb-3">
+                  <AlertTriangle size={16} />
+                  <span className="font-semibold text-sm uppercase">Challenges</span>
+                </div>
+                <ul className="space-y-2">
+                  {insight.challenges?.map((challenge, i) => (
+                    <li key={i} className="flex items-start space-x-2 text-sm text-gray-300">
+                      <span className="block w-1.5 h-1.5 mt-1.5 rounded-full bg-amber-500 flex-shrink-0"></span>
+                      <span>{challenge}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="text-[10px] text-gray-600 pt-4 text-center">
+                Analysis generated by Google Gemini 2.5 Flash. Data may vary.
+              </div>
+
+            </div>
+          ) : (
+             <div className="text-red-400 text-sm">Failed to load insights.</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;
